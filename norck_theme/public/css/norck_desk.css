@@ -1,0 +1,168 @@
+/* ============================================
+   NORCK ERPNEXT THEME v4 — Modal Picker
+   Brand: Norck GmbH | info@norck.fr
+   ============================================ */
+
+:root {
+  --norck-navbar-bg: #1b3a5c;
+  --norck-navbar-border: #2a527a;
+  --norck-navbar-text: #d0e4f7;
+  --norck-sidebar-bg: #1e3f63;
+  --norck-sidebar-border: #2a527a;
+  --norck-sidebar-text: #9bbdd9;
+  --norck-sidebar-hover-bg: rgba(232,65,122,0.12);
+  --norck-sidebar-hover-text: #e8f4ff;
+  --norck-sidebar-active-bg: rgba(232,65,122,0.18);
+  --norck-sidebar-active-text: #e8417a;
+  --norck-sidebar-active-border: #e8417a;
+  --norck-accent: #e8417a;
+  --norck-accent-hover: #c4305f;
+  --norck-page-title: #1b3a5c;
+  --norck-list-hover: #f0f5ff;
+  --norck-card-border: #e2eaf2;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  background-color: var(--norck-navbar-bg) !important;
+  border-bottom: 1px solid var(--norck-navbar-border) !important;
+  height: 48px !important;
+}
+.navbar .navbar-brand img, .navbar .navbar-brand { filter: brightness(0) invert(1); }
+.navbar .nav-link,
+.navbar .navbar-nav > li > a,
+.navbar .dropdown-toggle { color: var(--norck-navbar-text) !important; }
+.navbar .nav-link:hover { color: #ffffff !important; }
+.navbar .search-bar input, .navbar .awesomplete input {
+  background: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #e8f0fa !important;
+}
+.navbar .search-bar input::placeholder { color: #7aaac8 !important; }
+.navbar .notifications-icon svg, .navbar .navbar-nav .nav-link svg {
+  color: var(--norck-navbar-text) !important;
+  stroke: var(--norck-navbar-text) !important;
+}
+
+/* ── SIDEBAR ── */
+.layout-side-section, .desk-sidebar, .sidebar-column {
+  background-color: var(--norck-sidebar-bg) !important;
+  border-right: 1px solid var(--norck-sidebar-border) !important;
+}
+.standard-sidebar-item span { color: var(--norck-sidebar-text) !important; }
+.standard-sidebar-item:hover {
+  background-color: var(--norck-sidebar-hover-bg) !important;
+  border-radius: 6px !important;
+}
+.standard-sidebar-item:hover span { color: var(--norck-sidebar-hover-text) !important; }
+.standard-sidebar-item.selected {
+  background-color: var(--norck-sidebar-active-bg) !important;
+  border-left: 2px solid var(--norck-sidebar-active-border) !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+.standard-sidebar-item.selected span { color: var(--norck-sidebar-active-text) !important; }
+.standard-sidebar-item.selected .sidebar-item-icon svg {
+  color: var(--norck-sidebar-active-text) !important;
+  stroke: var(--norck-sidebar-active-text) !important;
+}
+.sidebar-menu .sidebar-label,
+.desk-sidebar .sidebar-section-group .sidebar-section-head {
+  color: #7aaac8 !important; font-size: 10px !important;
+  text-transform: uppercase !important; letter-spacing: 1px !important;
+}
+
+/* ── BUTTONS & LINKS ── */
+.btn-primary, .btn-primary:focus {
+  background-color: var(--norck-accent) !important;
+  border-color: var(--norck-accent) !important; color: #ffffff !important;
+}
+.btn-primary:hover {
+  background-color: var(--norck-accent-hover) !important;
+  border-color: var(--norck-accent-hover) !important;
+}
+a:not(.btn):not(.nav-link) { color: var(--norck-accent) !important; }
+a:not(.btn):not(.nav-link):hover { color: var(--norck-accent-hover) !important; }
+
+/* ── PAGE / CARDS ── */
+.page-head, .page-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid var(--norck-card-border) !important;
+}
+.page-title .title-text, .page-head .title-area h3 {
+  color: var(--norck-page-title) !important; font-weight: 600 !important;
+}
+.widget-card, .dashboard-widget, .number-card {
+  border: 0.5px solid var(--norck-card-border) !important; border-radius: 8px !important;
+}
+.form-tabs .nav-item .nav-link.active {
+  color: var(--norck-accent) !important;
+  border-bottom: 2px solid var(--norck-accent) !important;
+}
+.list-row:hover { background-color: var(--norck-list-hover) !important; }
+.list-row-checkbox:checked, input[type="checkbox"]:checked { accent-color: var(--norck-accent) !important; }
+.badge-primary, .label-primary { background-color: var(--norck-accent) !important; }
+.avatar .avatar-frame, .navbar .avatar-frame { border: 2px solid var(--norck-accent) !important; }
+.workspace-icon { color: var(--norck-accent) !important; }
+
+/* ── THEME MODAL ── */
+#norck-modal-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+  align-items: center; justify-content: center;
+}
+#norck-modal-overlay.open { display: flex; }
+
+#norck-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  width: 600px; max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  position: relative;
+}
+#norck-modal h2 {
+  font-size: 18px; font-weight: 700;
+  color: #1b3a5c; margin: 0 0 20px 0;
+}
+#norck-modal-close {
+  position: absolute; top: 16px; right: 20px;
+  font-size: 22px; cursor: pointer; color: #999;
+  background: none; border: none; line-height: 1;
+}
+#norck-modal-close:hover { color: #333; }
+
+#norck-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.norck-theme-card {
+  border: 2px solid #e8edf2;
+  border-radius: 10px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.norck-theme-card:hover {
+  border-color: #aac4e0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+}
+.norck-theme-card.active {
+  border-color: #e8417a;
+  box-shadow: 0 4px 14px rgba(232,65,122,0.20);
+}
+.norck-theme-card-name {
+  font-size: 13px; font-weight: 600;
+  color: #1b3a5c; margin-bottom: 8px;
+}
+.norck-swatches {
+  display: flex; gap: 5px; flex-wrap: wrap;
+}
+.norck-swatch {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.08);
+}
