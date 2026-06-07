@@ -78,7 +78,7 @@
     function openModal() { buildModal(); var o = document.getElementById('norck-modal-overlay'); if (o) o.classList.add('open'); }
     function closeModal() { var o = document.getElementById('norck-modal-overlay'); if (o) o.classList.remove('open'); }
 
-    // ── INJECTION: scan for any visible container holding "Logout" and inject above it ──
+    // -- INJECTION: scan for any visible container holding "Logout" and inject above it --
     function injectMenuLink() {
         if (document.getElementById('norck-theme-menu-link')) return;
 
