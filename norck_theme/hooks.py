@@ -1,3 +1,6 @@
+# Keep this file at: norck_theme/norck_theme/hooks.py
+# (mostly unchanged — included here so you can confirm app includes the new JS)
+
 app_name = "norck_theme"
 app_title = "Norck Theme"
 app_publisher = "Norck GmbH"
