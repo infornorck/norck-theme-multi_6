@@ -1,4 +1,4 @@
-// Norck Theme Switcher v4.3
+// Norck Theme Switcher v4.4 - floating button, no injection
 (function() {
     var THEMES = [
         { key: "norck-dark", name: "Norck Dark", swatches: ["#1b3a5c","#e8417a","#ffffff","#9bbdd9","#2a527a"], vars: { "--norck-navbar-bg":"#1b3a5c","--norck-navbar-border":"#2a527a","--norck-navbar-text":"#d0e4f7","--norck-sidebar-bg":"#1e3f63","--norck-sidebar-border":"#2a527a","--norck-sidebar-text":"#9bbdd9","--norck-sidebar-hover-bg":"rgba(232,65,122,0.12)","--norck-sidebar-hover-text":"#e8f4ff","--norck-sidebar-active-bg":"rgba(232,65,122,0.18)","--norck-sidebar-active-text":"#e8417a","--norck-sidebar-active-border":"#e8417a","--norck-accent":"#e8417a","--norck-accent-hover":"#c4305f","--norck-page-title":"#1b3a5c","--norck-list-hover":"#f0f5ff","--norck-card-border":"#e2eaf2" } },
@@ -27,32 +27,73 @@
         }
     }
 
-    function buildModal() {
-        if (document.getElementById('norck-modal-overlay')) return;
-        var current = localStorage.getItem(STORAGE_KEY) || DEFAULT;
+    function injectStyles() {
+        if (document.getElementById('norck-styles')) return;
         var style = document.createElement('style');
-        style.textContent = '#norck-modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:center;justify-content:center}#norck-modal-overlay.open{display:flex}#norck-modal{background:#fff;border-radius:12px;padding:28px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;position:relative}#norck-modal h2{margin:0 0 20px;font-size:18px;color:#1b3a5c}#norck-modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#666}#norck-theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.norck-theme-card{border:2px solid #e2eaf2;border-radius:8px;padding:12px;cursor:pointer;transition:border-color .2s}.norck-theme-card:hover{border-color:#e8417a}.norck-theme-card.active{border-color:#e8417a;box-shadow:0 0 0 2px rgba(232,65,122,0.25)}.norck-theme-card-name{font-size:13px;font-weight:600;margin-bottom:8px;color:#333}.norck-swatches{display:flex;gap:4px}.norck-swatch{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,0.1)}';
+        style.id = 'norck-styles';
+        style.textContent = [
+            '#norck-fab{position:fixed;bottom:24px;left:24px;z-index:99998;width:44px;height:44px;border-radius:50%;background:#e8417a;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s;}',
+            '#norck-fab:hover{transform:scale(1.1);}',
+            '#norck-modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:center;justify-content:center;}',
+            '#norck-modal-overlay.open{display:flex;}',
+            '#norck-modal{background:#fff;border-radius:12px;padding:28px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;position:relative;}',
+            '#norck-modal-title{margin:0 0 20px;font-size:18px;font-weight:600;color:#1b3a5c;}',
+            '#norck-modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#666;line-height:1;}',
+            '#norck-theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}',
+            '.norck-theme-card{border:2px solid #e2eaf2;border-radius:8px;padding:12px;cursor:pointer;transition:border-color .2s;}',
+            '.norck-theme-card:hover{border-color:#e8417a;}',
+            '.norck-theme-card.active{border-color:#e8417a;box-shadow:0 0 0 2px rgba(232,65,122,0.25);}',
+            '.norck-theme-card-name{font-size:13px;font-weight:600;margin-bottom:8px;color:#333;}',
+            '.norck-swatches{display:flex;gap:4px;}',
+            '.norck-swatch{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);}'
+        ].join('');
         document.head.appendChild(style);
+    }
+
+    function buildUI() {
+        if (document.getElementById('norck-fab')) return;
+        injectStyles();
+
+        // Floating button
+        var fab = document.createElement('button');
+        fab.id = 'norck-fab';
+        fab.title = 'Choose Theme';
+        fab.textContent = 'T';
+        fab.style.color = '#fff';
+        fab.style.fontWeight = 'bold';
+        fab.addEventListener('click', openModal);
+        document.body.appendChild(fab);
+
+        // Modal overlay
         var overlay = document.createElement('div');
         overlay.id = 'norck-modal-overlay';
+
         var modal = document.createElement('div');
         modal.id = 'norck-modal';
+
         var closeBtn = document.createElement('button');
         closeBtn.id = 'norck-modal-close';
-        closeBtn.textContent = '\u00d7';
+        closeBtn.textContent = 'x';
         closeBtn.addEventListener('click', closeModal);
-        var title = document.createElement('h2');
+
+        var title = document.createElement('div');
+        title.id = 'norck-modal-title';
         title.textContent = 'Choose Theme';
+
         var grid = document.createElement('div');
         grid.id = 'norck-theme-grid';
+
+        var current = localStorage.getItem(STORAGE_KEY) || DEFAULT;
         for (var i = 0; i < THEMES.length; i++) {
             (function(theme) {
                 var card = document.createElement('div');
                 card.className = 'norck-theme-card' + (theme.key === current ? ' active' : '');
                 card.dataset.key = theme.key;
+
                 var nameEl = document.createElement('div');
                 nameEl.className = 'norck-theme-card-name';
                 nameEl.textContent = theme.name;
+
                 var swatchRow = document.createElement('div');
                 swatchRow.className = 'norck-swatches';
                 for (var s = 0; s < theme.swatches.length; s++) {
@@ -67,6 +108,7 @@
                 grid.appendChild(card);
             })(THEMES[i]);
         }
+
         modal.appendChild(closeBtn);
         modal.appendChild(title);
         modal.appendChild(grid);
@@ -75,64 +117,14 @@
         document.body.appendChild(overlay);
     }
 
-    function openModal() { buildModal(); var o = document.getElementById('norck-modal-overlay'); if (o) o.classList.add('open'); }
+    function openModal() { var o = document.getElementById('norck-modal-overlay'); if (o) o.classList.add('open'); }
     function closeModal() { var o = document.getElementById('norck-modal-overlay'); if (o) o.classList.remove('open'); }
 
-    // -- INJECTION: scan for any visible container holding "Logout" and inject above it --
-    function injectMenuLink() {
-        if (document.getElementById('norck-theme-menu-link')) return;
-
-        // Find the Logout element anywhere in the visible DOM
-        var allEls = document.querySelectorAll('a, li, button, div[class*="item"]');
-        var logoutEl = null;
-        for (var i = 0; i < allEls.length; i++) {
-            var t = (allEls[i].innerText || allEls[i].textContent || '').trim();
-            if (t === 'Logout') { logoutEl = allEls[i]; break; }
-        }
-        if (!logoutEl) return;
-
-        var container = logoutEl.parentNode;
-        if (!container) return;
-
-        var item = document.createElement(logoutEl.tagName);
-        item.id = 'norck-theme-menu-link';
-        // Copy classes from Logout element for consistent styling
-        item.className = logoutEl.className;
-        item.textContent = 'Choose Theme';
-        item.style.cursor = 'pointer';
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            setTimeout(openModal, 50);
-        });
-
-        var divider = document.createElement('div');
-        divider.style.cssText = 'height:1px;background:#e2eaf2;margin:4px 0;';
-
-        container.insertBefore(divider, logoutEl);
-        container.insertBefore(item, logoutEl);
-    }
-
-    // Apply saved theme immediately
     applyTheme(localStorage.getItem(STORAGE_KEY) || DEFAULT);
 
-    // Watch for DOM changes (Frappe renders menus dynamically)
-    var observer = new MutationObserver(function(mutations) {
-        for (var i = 0; i < mutations.length; i++) {
-            if (mutations[i].addedNodes.length > 0) {
-                setTimeout(injectMenuLink, 30);
-                break;
-            }
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Also try on every click
-    document.addEventListener('click', function() { setTimeout(injectMenuLink, 150); });
-
     if (typeof frappe !== 'undefined') {
-        frappe.after_ajax(function() { setTimeout(buildModal, 500); });
-    } else {
-        document.addEventListener('DOMContentLoaded', function() { setTimeout(buildModal, 500); });
+        frappe.after_ajax(function() { setTimeout(buildUI, 300); });
     }
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(buildUI, 300); });
+    setTimeout(buildUI, 1000);
 })();
